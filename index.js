@@ -14,6 +14,9 @@ const storage = multer.diskStorage({
     }
 })
 const upload = multer({ storage: storage })
+
+// Serve the 'profiles' folder as static to access uploaded files
+app.use('/profiles', express.static(path.resolve('./profiles')));
 // Set view engine to EJS
 app.set("view engine", "ejs");
 app.set("views", path.resolve('./views'));
@@ -31,7 +34,8 @@ app.post('/profile', upload.single('profileImage'), (req, res) => {
     console.log(req.body);  // Logs the form fields (if any)
     console.log(req.file);  // Logs the file info uploaded via Multer
 
-    return res.redirect('/');
+    const imageUrl = `/profiles/${req.file.filename}`;
+    return res.render('profile', { imageUrl });
 });
 
 // Start the server
